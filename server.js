@@ -11,8 +11,12 @@ app.use('/css', express.static(path.join(__dirname, 'frontend/css')));
 app.use('/js', express.static(path.join(__dirname, 'frontend/js')));
 app.use('/images', express.static(path.join(__dirname, 'frontend/images')));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
+});
+
 app.get('', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/js/index.html'));
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
 const corsOptions = {
@@ -28,6 +32,11 @@ connectDB();
 app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// Test route
+app.get('/test', (req, res) => {
+  res.json({ message: 'CO-LAB Vault API is working!' });
+});
 
 app.use('/api/files', require('./routes/files'));
 app.use('/api', require('./routes/api'));
