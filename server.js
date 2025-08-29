@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -16,12 +16,13 @@ app.get('', (req, res) => {
 });
 
 const corsOptions = {
-  origin: ['http://localhost:8000', 'http://localhost:5000' ,'http://localhost:3000']
+  origin: ['http://localhost:8000', 'http://localhost:5000', 'http://localhost:3000', 'https://*.vercel.app', 'https://*.now.sh']
 };
 app.use(cors(corsOptions));
 
 app.use(express.json());
 
+// Connect to database
 connectDB();
 
 app.use(express.static('public'));
@@ -29,10 +30,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use('/api/files', require('./routes/files'));
+app.use('/api', require('./routes/api'));
 app.use('/files', require('./routes/show'));
 app.use('/files/download', require('./routes/download'));
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}.`));
+// For Vercel serverless deployment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Listening on port ${PORT}.`));
+}
+
+module.exports = app;
 
 
 
