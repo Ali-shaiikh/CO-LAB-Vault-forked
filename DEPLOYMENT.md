@@ -62,3 +62,4 @@ Files are now stored directly in the MongoDB database as binary data, making the
 - If you get database connection errors, check your MongoDB Atlas connection string
 - Make sure your MongoDB Atlas IP whitelist includes `0.0.0.0/0` for Vercel
 - Check Vercel function logs for any errors
+

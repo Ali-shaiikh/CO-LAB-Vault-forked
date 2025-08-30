@@ -42,7 +42,7 @@ const dragDropArea = document.getElementById('drag-drop-area');
         const formData = new FormData();
         formData.append('myfile', file);
 
-        fetch('http://localhost:5000/api/files', {
+        fetch('/api/files', {
           method: 'POST',
           body: formData
         })

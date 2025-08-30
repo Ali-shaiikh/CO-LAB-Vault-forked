@@ -20,7 +20,8 @@ app.get('', (req, res) => {
 });
 
 const corsOptions = {
-  origin: ['http://localhost:8000', 'http://localhost:5000', 'http://localhost:3000', 'https://*.vercel.app', 'https://*.now.sh']
+  origin: ['http://localhost:8000', 'http://localhost:5000', 'http://localhost:3000', 'https://*.vercel.app', 'https://*.now.sh', 'https://co-lab-vault-forked.vercel.app'],
+  credentials: true
 };
 app.use(cors(corsOptions));
 
