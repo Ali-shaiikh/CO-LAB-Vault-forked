@@ -215,8 +215,8 @@ footer a {
 
 #drag-drop-area {
     position: absolute;
-    top: 45%; 
-    left: 80%;
+    top: 100%; 
+    left: 90%;
     transform: translate(-50%, -50%);
     width: 350px; 
     height: 350px;
@@ -245,16 +245,19 @@ footer a {
     height: 35px; 
 }
 
-#drag-drop-area span {
+#drag-drop-area p {
     display: block;
     color: rgba(255, 255, 255, 0.7);
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin: 0;
     position: absolute;
-    top: 59%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    line-height: 1.4;
 }
 
 #file-input {
