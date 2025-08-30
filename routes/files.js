@@ -33,21 +33,23 @@ router.post('/', (req, res) => {
       });
       
       try {
-        // Check if database is connected, if not try to connect
-        if (mongoose.connection.readyState !== 1) {
-          console.log('Database not connected, attempting to connect...');
-          const connectDB = require('../config/db');
-          connectDB();
-          
-          // Wait a bit for connection
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          if (mongoose.connection.readyState !== 1) {
-            throw new Error('Database connection failed');
-          }
+        // Create a new connection for this upload
+        const mongoURL = process.env.MONGO_CONNECTION_URL;
+        if (!mongoURL) {
+          throw new Error('MongoDB connection URL not found');
         }
 
-        const file = new File({
+        console.log('Creating new database connection for upload...');
+        const uploadConnection = mongoose.createConnection(mongoURL, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+          serverSelectionTimeoutMS: 15000,
+        });
+
+        // Create a new File model for this connection
+        const UploadFile = uploadConnection.model('File', File.schema);
+
+        const file = new UploadFile({
             filename: req.file.originalname || req.file.filename,
             originalFilename: req.file.originalname,
             fileData: req.file.buffer, // Store file data in database
@@ -55,7 +57,11 @@ router.post('/', (req, res) => {
             uuid: uuidv4(),
             size: req.file.size
         });
+        
         const response = await file.save();
+        
+        // Close the connection
+        await uploadConnection.close();
         
         // Use a fallback URL if APP_BASE_URL is not set
         const baseUrl = process.env.APP_BASE_URL || `https://${req.get('host')}`;
@@ -64,8 +70,7 @@ router.post('/', (req, res) => {
         console.error('Error saving file:', error);
         res.status(500).send({ 
           error: 'Error saving file to database',
-          details: error.message,
-          dbStatus: mongoose.connection.readyState
+          details: error.message
         });
       }
     });
