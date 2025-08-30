@@ -4,6 +4,8 @@ const dragDropArea = document.getElementById('drag-drop-area');
     const customFilenameInput = document.getElementById('custom-filename');
     const dropFilesBtn = document.getElementById('drop-files-btn');
     const closeDragDropBtn = document.getElementById('close-drag-drop');
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const navMenu = document.querySelector('.nav-menu');
 
     dragDropArea.addEventListener('click', () => {
       fileInput.click();
@@ -59,6 +61,28 @@ const dragDropArea = document.getElementById('drag-drop-area');
     closeDragDropBtn.addEventListener('click', (e) => {
       e.stopPropagation(); // Prevent triggering the drag-drop area click
       closeDragDropArea();
+    });
+
+    // Hamburger menu functionality
+    hamburgerMenu.addEventListener('click', () => {
+      hamburgerMenu.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a nav link
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburgerMenu.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburgerMenu.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburgerMenu.classList.remove('active');
+        navMenu.classList.remove('active');
+      }
     });
 
     function handleFiles(files) {
