@@ -27,8 +27,8 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// Connect to database
-connectDB();
+// Connect to database (optional for serverless)
+// connectDB();
 
 app.use(express.static('public'));
 app.set('views', path.join(__dirname, 'views'));
