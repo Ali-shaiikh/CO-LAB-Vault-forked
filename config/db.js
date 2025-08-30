@@ -20,10 +20,14 @@ function connectDB(){
   mongoose.connect(mongoURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
-    maxPoolSize: 10,
+    maxPoolSize: 5,
     minPoolSize: 1,
+    retryWrites: true,
+    w: 'majority',
+    bufferCommands: false,
+    bufferMaxEntries: 0
   })
   .then(() => {
     console.log('Connected to database successfully');
@@ -44,6 +48,14 @@ function connectDB(){
   mongoose.connection.on('reconnected', () => {
     console.log('MongoDB reconnected');
   });
+
+  // Add connection timeout
+  setTimeout(() => {
+    if (mongoose.connection.readyState !== 1) {
+      console.error('Database connection timeout after 30 seconds');
+      mongoose.connection.close();
+    }
+  }, 30000);
 }
 
 module.exports = connectDB;
