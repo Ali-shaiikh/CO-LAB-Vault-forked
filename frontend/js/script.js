@@ -2,6 +2,8 @@ const dragDropArea = document.getElementById('drag-drop-area');
     const fileInput = document.getElementById('file-input');
     const resultDiv = document.getElementById('result');
     const customFilenameInput = document.getElementById('custom-filename');
+    const dropFilesBtn = document.getElementById('drop-files-btn');
+    const closeDragDropBtn = document.getElementById('close-drag-drop');
 
     dragDropArea.addEventListener('click', () => {
       fileInput.click();
@@ -35,6 +37,30 @@ const dragDropArea = document.getElementById('drag-drop-area');
       handleFiles(files);
     });
 
+    // Connect Drop Files button to show drag-drop area
+    dropFilesBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      dragDropArea.classList.add('show');
+    });
+
+    // Close drag-drop area when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dragDropArea.contains(e.target) && !dropFilesBtn.contains(e.target)) {
+        dragDropArea.classList.remove('show');
+      }
+    });
+
+    // Close drag-drop area after successful upload
+    function closeDragDropArea() {
+      dragDropArea.classList.remove('show');
+    }
+
+    // Close button functionality
+    closeDragDropBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent triggering the drag-drop area click
+      closeDragDropArea();
+    });
+
     function handleFiles(files) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -65,6 +91,7 @@ const dragDropArea = document.getElementById('drag-drop-area');
                   <a href="${data.file}" target="_blank">${data.file}</a>
                 </p>
               `;
+              closeDragDropArea(); // Close the drag-drop area after successful upload
             }
           })
           .catch(err => {
