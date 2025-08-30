@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
+const mongoose = require('mongoose');
 const File = require('../models/file');
 const { v4: uuidv4 } = require('uuid');
 
@@ -23,6 +24,11 @@ router.post('/', (req, res) => {
       }
       
       try {
+        // Check if database is connected
+        if (mongoose.connection.readyState !== 1) {
+          throw new Error('Database not connected');
+        }
+
         const file = new File({
             filename: req.file.originalname || req.file.filename,
             originalFilename: req.file.originalname,
@@ -32,10 +38,17 @@ router.post('/', (req, res) => {
             size: req.file.size
         });
         const response = await file.save();
-        res.json({ file: `${process.env.APP_BASE_URL}/files/${response.uuid}` });
+        
+        // Use a fallback URL if APP_BASE_URL is not set
+        const baseUrl = process.env.APP_BASE_URL || `https://${req.get('host')}`;
+        res.json({ file: `${baseUrl}/files/${response.uuid}` });
       } catch (error) {
         console.error('Error saving file:', error);
-        res.status(500).send({ error: 'Error saving file to database' });
+        res.status(500).send({ 
+          error: 'Error saving file to database',
+          details: error.message,
+          dbStatus: mongoose.connection.readyState
+        });
       }
     });
 });

@@ -12,12 +12,27 @@ function connectDB(){
   mongoose.connect(mongoURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
   })
   .then(() => {
     console.log('Connected to database');
   })
   .catch((err) => {
     console.error(`Error connecting to the database: ${err.message}`);
+  });
+
+  // Handle connection events
+  mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+  });
+
+  mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+  });
+
+  mongoose.connection.on('reconnected', () => {
+    console.log('MongoDB reconnected');
   });
 }
 
