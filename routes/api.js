@@ -16,5 +16,12 @@ router.get('/health', (req, res) => {
   });
 });
 
+router.get('/test-upload', (req, res) => {
+  res.json({ 
+    message: 'Upload endpoint is accessible',
+    timestamp: new Date().toISOString()
+  });
+});
+
 module.exports = router;
 

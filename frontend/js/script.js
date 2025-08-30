@@ -46,15 +46,26 @@ const dragDropArea = document.getElementById('drag-drop-area');
           method: 'POST',
           body: formData
         })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              return response.json().then(errorData => {
+                throw new Error(errorData.error || `HTTP ${response.status}`);
+              });
+            }
+            return response.json();
+          })
           .then(data => {
             console.log('Upload success:', data);
-            resultDiv.innerHTML = `
-              <p style="color:green;">
-                File uploaded successfully:<br>
-                <a href="${data.file}" target="_blank">${data.file}</a>
-              </p>
-            `;
+            if (data.error) {
+              resultDiv.innerHTML = `<p style="color:red;">Upload error: ${data.error}</p>`;
+            } else {
+              resultDiv.innerHTML = `
+                <p style="color:green;">
+                  File uploaded successfully:<br>
+                  <a href="${data.file}" target="_blank">${data.file}</a>
+                </p>
+              `;
+            }
           })
           .catch(err => {
             console.error('Error uploading file:', err);

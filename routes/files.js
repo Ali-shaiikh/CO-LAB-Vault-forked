@@ -10,18 +10,27 @@ let storage = multer.memoryStorage();
 
 let upload = multer({ 
   storage, 
-  limits:{ fileSize: 1000000 * 100 }, // 100MB limit
+  limits:{ fileSize: 1000000 * 10 }, // 10MB limit for testing
 }).single('myfile'); 
 
 router.post('/', (req, res) => {
+    console.log('File upload request received');
     upload(req, res, async (err) => {
       if (err) {
+        console.error('Multer error:', err);
         return res.status(500).send({ error: err.message });
       }
       
       if (!req.file) {
+        console.error('No file in request');
         return res.status(400).send({ error: 'No file uploaded' });
       }
+      
+      console.log('File received:', {
+        originalname: req.file.originalname,
+        size: req.file.size,
+        mimetype: req.file.mimetype
+      });
       
       try {
         // Check if database is connected
