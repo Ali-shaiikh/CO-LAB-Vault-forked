@@ -33,9 +33,18 @@ router.post('/', (req, res) => {
       });
       
       try {
-        // Check if database is connected
+        // Check if database is connected, if not try to connect
         if (mongoose.connection.readyState !== 1) {
-          throw new Error('Database not connected');
+          console.log('Database not connected, attempting to connect...');
+          const connectDB = require('../config/db');
+          connectDB();
+          
+          // Wait a bit for connection
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          if (mongoose.connection.readyState !== 1) {
+            throw new Error('Database connection failed');
+          }
         }
 
         const file = new File({

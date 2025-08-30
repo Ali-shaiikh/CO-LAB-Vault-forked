@@ -9,14 +9,24 @@ function connectDB(){
     return;
   }
 
+  // If already connected, don't connect again
+  if (mongoose.connection.readyState === 1) {
+    console.log('Database already connected');
+    return;
+  }
+
+  console.log('Attempting to connect to database...');
+  
   mongoose.connect(mongoURL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 10000,
     socketTimeoutMS: 45000,
+    maxPoolSize: 10,
+    minPoolSize: 1,
   })
   .then(() => {
-    console.log('Connected to database');
+    console.log('Connected to database successfully');
   })
   .catch((err) => {
     console.error(`Error connecting to the database: ${err.message}`);

@@ -23,5 +23,30 @@ router.get('/test-upload', (req, res) => {
   });
 });
 
+router.get('/test-db', async (req, res) => {
+  try {
+    // Test database connection
+    const dbState = mongoose.connection.readyState;
+    const states = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    res.json({
+      dbState: states[dbState] || 'unknown',
+      dbStateCode: dbState,
+      mongoUrl: process.env.MONGO_CONNECTION_URL ? 'Set' : 'Not set',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      dbState: mongoose.connection.readyState
+    });
+  }
+});
+
 module.exports = router;
 
